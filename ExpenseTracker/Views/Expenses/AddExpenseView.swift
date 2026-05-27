@@ -19,9 +19,7 @@ struct AddExpenseView: View {
     
     var body: some View {
         NavigationView {
-//            .onAppear{
-//                selectedMember = viewModel.familyMembers.first
-//            }
+            
             VStack {
                 formFields
                 
@@ -31,6 +29,9 @@ struct AddExpenseView: View {
             }
             .padding()
             .navigationTitle("Add Expense")
+            .onAppear{
+                selectedMember = viewModel.familyMembers.first
+            }
         }
     }
     

@@ -36,6 +36,11 @@ class ExpenseViewModel: ObservableObject{
     func deleteExpenses(id: UUID){
         expenses.removeAll() {$0.id == id}
     }
+    
+    func deleteMember(id: UUID) {
+        familyMembers.removeAll(){$0.id == id}
+    }
+    
     ///Mark: Filtering(do it later)
     var filteredExpenses: [Expense] {
         _ = Calendar.current

@@ -44,9 +44,7 @@ struct DashboardView: View {
         }
     }
     
-    
     ///#MARK: - Header
-    
     
     var header: some View {
         VStack(alignment: .leading, spacing: 4) {
@@ -62,9 +60,7 @@ struct DashboardView: View {
         .frame(maxWidth: .infinity, alignment: .leading)
     }
     
-    
     ///#MARK: - Weekly Total
-    
     
     var weeklyTotal: some View {
         VStack(spacing: 6) {
@@ -82,9 +78,7 @@ struct DashboardView: View {
         .cornerRadius(16)
     }
     
-    
     ///#MARK: - Add Expense Button
-    
     
     var addExpenseButton: some View {
         NavigationLink(destination: AddExpenseView().environmentObject(viewModel)) {
@@ -96,7 +90,9 @@ struct DashboardView: View {
                 .cornerRadius(12)
         }
     }
+    
     ///#MARK: - Analytics Button
+    
     var analyticsButton: some View{
         NavigationLink(destination: AnalyticsView()){
             Text("View Analytics")
@@ -136,9 +132,7 @@ struct DashboardView: View {
         }
     }
     
-    
     ///#MARK: - Recent Expenses
-    
     
     var recentExpenses: some View {
         VStack(alignment: .leading, spacing: 10) {

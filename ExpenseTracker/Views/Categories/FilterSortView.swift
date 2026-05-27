@@ -8,20 +8,26 @@
 import SwiftUI
 
 struct FilterSortView: View {
+    @State private var showMemberSheet = false
     @EnvironmentObject var viewModel: ExpenseViewModel
     
     @Environment(\.dismiss) var dismiss
     
     var body: some View {
         NavigationView {
+            
             VStack(spacing: 24) {
                 filterSection
-                //sortSection
+                manageMembersButton
                 Spacer()
                 applyButton
             }
             .padding()
             .navigationTitle("Filter & Sort")
+            .sheet(isPresented: $showMemberSheet) {
+                MemberManagementView()
+                    .environmentObject(viewModel)
+            }
         }
     }
     
@@ -70,37 +76,23 @@ struct FilterSortView: View {
         }
     }
         
-//    var sortSection: some View {
-//        VStack(alignment: .leading, spacing: 12) {
-//            
-//            Label("Sort By", systemImage: "arrow.up.arrow.down.circle")
-//                .font(.headline)
-//            
-//            ForEach(ExpenseSort.allCases, id: \.self) { sort in
-//                
-//                HStack {
-//                    
-//                    Image(systemName: sortIcon(for: sort))
-//                    
-//                    Text(sort.title)
-//                    
-//                    Spacer()
-//                    
-//                    if viewModel.selectedSort == sort {
-//                        Image(systemName: "checkmark.circle.fill")
-//                            .foregroundColor(.green)
-//                    }
-//                }
-//                .padding()
-//                .background(Color(.systemGray6))
-//                .cornerRadius(10)
-//                .onTapGesture {
-//                    viewModel.selectedSort = sort
-//                }
-//            }
-//        }
-//    }
-//    
+    var manageMembersButton: some View {
+        Button {
+            showMemberSheet = true
+        } label: {
+            HStack {
+                Image(systemName: "person.3.fill")
+                Text("Manage Family Members")
+                Spacer()
+                Image(systemName: "chevron.right")
+                    .font(.caption)
+            }
+            .padding()
+            .background()
+            .cornerRadius(12)
+        }
+    }
+    
     var applyButton: some View{
         Button(action:{
             dismiss()
