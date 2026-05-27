@@ -11,6 +11,7 @@ struct AddMemberView: View {
     
     @EnvironmentObject var viewModel: ExpenseViewModel
     @Environment(\.dismiss) var dismiss
+    @Environment(\.modelContext) private var context
     @State private var name: String = ""
     @State private var avatar: String = ""
     @State private var colorHex: String = "#2196F3"
@@ -35,7 +36,10 @@ struct AddMemberView: View {
                         colorHex: colorHex
                     )
                     
-                    viewModel.familyMembers.append(member)
+                    viewModel.saveMember(name: name,
+                                         avatar: avatar,
+                                         colorHex: colorHex,
+                                         context: context)
                     dismiss()
                 } label: {
                     Text("Add Member")

@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SwiftData
 
 @main
 struct ExpenseTrackerApp: App {
@@ -16,5 +17,9 @@ struct ExpenseTrackerApp: App {
             DashboardView()
                 .environmentObject(viewModel)
         }
+        .modelContainer(for: [
+            Expense.self,
+            FamilyMember.self
+        ])
     }
 }

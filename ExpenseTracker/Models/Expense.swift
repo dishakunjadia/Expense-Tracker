@@ -8,9 +8,10 @@
 import SwiftData
 import Foundation
 
-struct Expense: Identifiable, Hashable, Codable{
+@Model
+class Expense {
     /// Mark: Properties
-    let id: UUID
+    var id: UUID
     var title: String
     var amount: Double
     var date: Date
@@ -18,4 +19,22 @@ struct Expense: Identifiable, Hashable, Codable{
     var member: FamilyMember
     var notes: String?
     //let member : FamilyMember
+    
+    init(
+        id: UUID = UUID(),
+        title: String,
+        amount: Double,
+        date: Date,
+        category:Category,
+        member:FamilyMember,
+        notes: String?
+    ) {
+        self.id = id
+        self.title = title
+        self.amount = amount
+        self.date = date
+        self.category = category
+        self.member = member
+        self.notes
+    }
 }

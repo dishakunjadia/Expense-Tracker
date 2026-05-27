@@ -6,11 +6,19 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct DashboardView: View {
     
-    @EnvironmentObject var viewModel: ExpenseViewModel
+    //@EnvironmentObject var viewModel: ExpenseViewModel
+    @Query(sort: \Expense.date, order: .reverse)
+    private var expenses: [Expense]
+    
+    @Query
+    private var familyMembers: [FamilyMember]
+
     @State private var showFilterSheet = false
+    @State private var selectedFilter: ExpenseFilter = .all
     
     var body: some View {
         NavigationView {
@@ -38,7 +46,7 @@ struct DashboardView: View {
                 }
                 .sheet(isPresented: $showFilterSheet){
                     FilterSortView()
-                        .environmentObject(viewModel)
+                        
                 }
             }
         }
@@ -69,7 +77,7 @@ struct DashboardView: View {
                 .font(.subheadline)
                 .foregroundColor(.secondary)
             
-            Text("$\(viewModel.expenses.reduce(0) { $0 + $1.amount }, specifier: "%.2f")")
+            Text("$\(filteredExpenses.reduce(0) { $0 + $1.amount }, specifier: "%.2f")")
                 .font(.system(size: 34, weight: .bold))
         }
         .frame(maxWidth: .infinity)
@@ -81,7 +89,7 @@ struct DashboardView: View {
     ///#MARK: - Add Expense Button
     
     var addExpenseButton: some View {
-        NavigationLink(destination: AddExpenseView().environmentObject(viewModel)) {
+        NavigationLink(destination: AddExpenseView()) {
             Text("Add Expense")
                 .frame(maxWidth: .infinity)
                 .padding()
@@ -115,32 +123,77 @@ struct DashboardView: View {
                     .padding(.vertical, 6)
                     .padding(.horizontal, 12)
                     .background(
-                        viewModel.selectedFilter == filter
+                        selectedFilter == filter
                         ? Color.cyan
                         : Color(.systemGray6)
                     )
                     .foregroundColor(
-                        viewModel.selectedFilter == filter
+                        selectedFilter == filter
                         ? Color.mint
                         : .primary
                     )
                     .cornerRadius(10)
                     .onTapGesture{
-                        viewModel.selectedFilter = filter
+                        selectedFilter = filter
                     }
             }
         }
     }
     
-    ///#MARK: - Recent Expenses
+    ///#MARK: - Filtered Expenses
+    var filteredExpenses: [Expense]{
+        let calendar = Calendar.current
+        let now = Date()
+        
+        switch selectedFilter {
+        case .all:
+            return expenses
+        case .weekly:
+            return expenses.filter{
+                calendar.isDate(
+                    $0.date,
+                    equalTo: now,
+                    toGranularity: .weekOfYear
+                )
+            }
+        case .monthly:
+            return expenses.filter {
+                calendar.isDate(
+                    $0.date,
+                    equalTo: now,
+                    toGranularity: .month)
+            }
+        case .yearly:
+            return expenses.filter {
+                calendar.isDate(
+                    $0.date,
+                    equalTo: now,
+                    toGranularity: .year)
+            }
+        case .byMember:
+            <#code#>
+        case .byCategory:
+            <#code#>
+        case .dateNewest:
+            <#code#>
+        case .dateoldest:
+            <#code#>
+        case .amountHighToLow:
+            <#code#>
+        case .amountLowToHigh:
+            <#code#>
+        }
+    }
     
+    ///#MARK: - Recent Expenses
+
     var recentExpenses: some View {
         VStack(alignment: .leading, spacing: 10) {
             
             Text("Recent Expenses")
                 .font(.headline)
             
-            ForEach(viewModel.expenses) { expense in
+            ForEach(expenses) { expense in
                 HStack {
                     
                     VStack(alignment: .leading, spacing: 4) {
@@ -165,21 +218,24 @@ struct DashboardView: View {
         }
     }
     
+    ///#MARK: - Individual Members
+
     var memberCards: some View {
         VStack(alignment: .leading, spacing: 16) {
             Text("Family Members")
                 .font(.headline)
-            ForEach(viewModel.familyMembers) { member in
+            ForEach(familyMembers) { member in
                 
-                FamilyMemberExpenseCard(member: member, expenses: viewModel.expenses.filter{
+                FamilyMemberExpenseCard(member: member, expenses: expenses.filter{
                     $0.member.id == member.id
                 })
             }
         }
     }
+    
 }
 
 #Preview {
     DashboardView()
-        .environmentObject(ExpenseViewModel())
+        
 }

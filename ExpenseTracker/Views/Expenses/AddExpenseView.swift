@@ -6,11 +6,13 @@
 //
 
 import SwiftUI
+import SwiftData
+
 
 struct AddExpenseView: View {
-    
-    @EnvironmentObject var viewModel: ExpenseViewModel
+    @Query private var familyMembers: [FamilyMember]
     @Environment(\.dismiss) var dismiss
+    @Environment(\.modelContext) private var context
     @State private var title: String = ""
     @State private var amount: String = ""
     @State private var selectedCategory: Category = .food
@@ -30,7 +32,7 @@ struct AddExpenseView: View {
             .padding()
             .navigationTitle("Add Expense")
             .onAppear{
-                selectedMember = viewModel.familyMembers.first
+                selectedMember = familyMembers.first
             }
         }
     }
@@ -56,7 +58,7 @@ struct AddExpenseView: View {
             
             
             Picker("Family Member", selection: $selectedMember){
-                ForEach(viewModel.familyMembers, id: \.self) { member in
+                ForEach(familyMembers, id: \.self) { member in
                     HStack {
                         Text(member.avatar)
                         Text(member.name)
@@ -84,7 +86,12 @@ struct AddExpenseView: View {
                 member: selectedMember,
                 notes: nil
             )
-            viewModel.addExpense(expense)
+            do {
+                try context.save()
+            } catch {
+                print(error)
+            }
+            
             dismiss()
             
             //print("Save Tapped")
@@ -101,5 +108,5 @@ struct AddExpenseView: View {
 
 #Preview {
     AddExpenseView()
-        .environmentObject(ExpenseViewModel())
+        
 }

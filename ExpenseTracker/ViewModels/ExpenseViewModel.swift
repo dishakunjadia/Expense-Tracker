@@ -4,7 +4,7 @@
 //
 //  Created by Disha Kunjadia on 5/23/26.
 //
-
+import SwiftData
 import Foundation
 import SwiftUI
 
@@ -24,9 +24,9 @@ class ExpenseViewModel: ObservableObject{
     
     /// Mark: Init
     
-    init() {
-        loadMockData()
-    }
+//    init() {
+//        loadMockData()
+//    }
     
     ///Mark: CRUD
     func addExpense(_ expense: Expense) {
@@ -67,27 +67,71 @@ class ExpenseViewModel: ObservableObject{
         }
     }
     
-    private func loadMockData() {
-        expenses = [
-            Expense(
-                id: UUID(),
-                title: "Groceries",
-                amount: 120.5,
-                date: Date(),
-                category: .food,
-                member: FamilyMember(id: UUID(), name: "Maate", avatar: "👩", colorHex: "#FF5733"),
-                notes: "Weekly Groceries"
-            ),
-            
-            Expense(
-                            id: UUID(),
-                            title: "Netflix",
-                            amount: 15.99,
-                            date: Date(),
-                            category: .subscriptions,
-                            member: FamilyMember(id: UUID(), name: "Dad", avatar: "👨", colorHex: "#33A1FF"),
-                            notes: nil)
-        ]
+//    private func loadMockData() {
+//        expenses = [
+//            Expense(
+//                id: UUID(),
+//                title: "Groceries",
+//                amount: 120.5,
+//                date: Date(),
+//                category: .food,
+//                member: FamilyMember(id: UUID(), name: "Maate", avatar: "👩", colorHex: "#FF5733"),
+//                notes: "Weekly Groceries"
+//            ),
+//            
+//            Expense(
+//                            id: UUID(),
+//                            title: "Netflix",
+//                            amount: 15.99,
+//                            date: Date(),
+//                            category: .subscriptions,
+//                            member: FamilyMember(id: UUID(), name: "Dad", avatar: "👨", colorHex: "#33A1FF"),
+//                            notes: nil)
+//        ]
+//    }
+    func saveExpense(
+        title: String,
+        amount: Double,
+        date: Date,
+        category: Category,
+        member: FamilyMember,
+        notes: String?,
+        context: ModelContext
+    ){
+        let expense = Expense( title: title,
+            amount: amount,
+            date: date,
+            category: category,
+            member: member,
+            notes: notes)
+        context.insert(expense)
+        
+        do {
+            try context.save()
+        } catch {
+            print("Failed to save Expense: \(error)")
+        }
     }
     
+    
+    func saveMember(
+        name: String,
+        avatar: String,
+        colorHex: String,
+        context: ModelContext
+    ){
+        let member = FamilyMember(
+            id: UUID(),
+            name: name,
+            avatar: avatar,
+            colorHex: colorHex
+        )
+        
+        context.insert(member)
+        do {
+            try context.save()
+        } catch {
+            print("Failed to save member: \(error)")
+        }
+    }
 }

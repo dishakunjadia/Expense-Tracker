@@ -6,16 +6,20 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct MemberManagementView : View{
-    @EnvironmentObject var viewModel: ExpenseViewModel
+    //@EnvironmentObject var viewModel: ExpenseViewModel
+    
+    @Query private var familyMembers: [FamilyMember]
+    @Environment(\.modelContext) private var context
     @State private var showAddMemberSheet = false
     @State private var selectedMember: FamilyMember?
     
     var body: some View {
         NavigationView{
             List {
-                ForEach(viewModel.familyMembers) { member in
+                ForEach(familyMembers) { member in
                     
                     HStack {
                         
@@ -46,9 +50,14 @@ struct MemberManagementView : View{
                     
                     indexSet.forEach { index in
                         
-                        let member = viewModel.familyMembers[index]
+                        let member = familyMembers[index]
                         
-                        viewModel.deleteMember(id: member.id)
+                        context.delete(member)
+                        do {
+                            try context.save()
+                        } catch {
+                            print (error)
+                        }
                     }
                 }
         }
@@ -64,11 +73,11 @@ struct MemberManagementView : View{
             }
             .sheet(isPresented: $showAddMemberSheet) {
                 AddMemberView()
-                    .environmentObject(viewModel)
+                    
             }
             .sheet(item: $selectedMember){ member in
                 EditMemberView(member: member)
-                    .environmentObject(viewModel)
+                    
             }
         }
     }
@@ -76,5 +85,4 @@ struct MemberManagementView : View{
 
 #Preview {
     MemberManagementView()
-        .environmentObject(ExpenseViewModel())
 }
