@@ -87,7 +87,7 @@ struct DashboardView: View {
     
     
     var addExpenseButton: some View {
-        NavigationLink(destination: AddExpenseView()) {
+        NavigationLink(destination: AddExpenseView().environmentObject(viewModel)) {
             Text("Add Expense")
                 .frame(maxWidth: .infinity)
                 .padding()
@@ -167,6 +167,19 @@ struct DashboardView: View {
                 .padding()
                 .background(Color(.systemGray6))
                 .cornerRadius(12)
+            }
+        }
+    }
+    
+    var memberCards: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            Text("Family Members")
+                .font(.headline)
+            ForEach(viewModel.familyMembers) { member in
+                
+                FamilyMemberExpenseCard(member: member, expenses: viewModel.expenses.filter{
+                    $0.member.id == member.id
+                })
             }
         }
     }

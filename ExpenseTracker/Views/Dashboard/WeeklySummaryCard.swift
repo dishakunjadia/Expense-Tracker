@@ -19,9 +19,9 @@ struct WeeklySummaryCard: View {
             icon: "cart.fill",
             total: 210,
             details: [
-                "Costco - $120",
-                "Whole Foods - $55",
-                "Trader Joe's - $35"
+                WeeklyExpenseDetail(day: "Mon",
+                                    title: "Costco",
+                                    amount: 120)
             ]
         ),
         
@@ -30,17 +30,24 @@ struct WeeklySummaryCard: View {
             icon: "house.fill",
             total: 1200,
             details: [
-                "Monthly apartment rent"
+                WeeklyExpenseDetail(day: "Tue",
+                                    title: "Greenhouse management",
+                                    amount: 1200)
             ]
         ),
         
         WeeklyCategoryExpense(
             title: "Utilities",
             icon: "bolt.fill",
-            total: 95,
+            total: 140,
             details: [
-                "Electricity - $60",
-                "Internet - $35"
+                WeeklyExpenseDetail(day: "Tue",
+                                    title: "Electricity",
+                                    amount: 20),
+                WeeklyExpenseDetail(day: "Tue",
+                                    title: "Internet",
+                                    amount: 120)
+                
             ]
         ),
         
@@ -49,19 +56,29 @@ struct WeeklySummaryCard: View {
             icon: "fork.knife",
             total: 85,
             details: [
-                "Lunch - $25",
-                "Coffee - $15",
-                "Dinner Meeting - $45"
+                WeeklyExpenseDetail(day: "Tue",
+                                    title: "Coffee",
+                                    amount: 25),
+                WeeklyExpenseDetail(day: "Tue",
+                                    title: "Lunch",
+                                    amount: 15),
+                WeeklyExpenseDetail(day: "Tue",
+                                    title: "Dinner",
+                                    amount: 45)
             ]
         ),
         
         WeeklyCategoryExpense(
             title: "Allowances",
             icon: "figure.2.and.child.holdinghands",
-            total: 40,
+            total: 160,
             details: [
-                "Sam - $20",
-                "Mia - $20"
+                WeeklyExpenseDetail(day: "Tue",
+                                    title: "Mia ",
+                                    amount: 80),
+                WeeklyExpenseDetail(day: "Tue",
+                                    title: "Sam",
+                                    amount: 80)
             ]
         )
     ]
@@ -202,11 +219,28 @@ extension WeeklySummaryCard {
                 
                 VStack(alignment: .leading, spacing: 10) {
                     
-                    ForEach(expense.details, id: \.self) { detail in
+                    ForEach(expense.details) { detail in
                         
-                        Text(detail)
-                            .font(.subheadline)
-                            .foregroundColor(.secondary)
+                        HStack(spacing: 10) {
+                            Image(systemName: "calendar")
+                                .font(.caption)
+                                .foregroundColor(.blue)
+                            
+                            Text(detail.day)
+                                .font(.caption)
+                                .fontWeight(.semibold)
+                                .foregroundColor(.secondary)
+                            
+                            Text(detail.title)
+                                .font(.subheadline)
+                            
+                            Spacer()
+                            
+                            Text("$\(detail.amount, specifier: "%.0f")")
+                                .font(.subheadline)
+                                .fontWeight(.medium)
+                            
+                        }
                     }
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -233,9 +267,15 @@ struct WeeklyCategoryExpense: Identifiable {
     
     let total: Double
     
-    let details: [String]
+    let details: [WeeklyExpenseDetail]
 }
 
+struct WeeklyExpenseDetail: Identifiable{
+    let id = UUID()
+    let day: String
+    let title: String
+    let amount: Double
+}
 
 // MARK: - Preview
 

@@ -15,12 +15,12 @@ class ExpenseViewModel: ObservableObject{
     @Published var selectedFilter: ExpenseFilter = .all
     @Published var selectedMember: FamilyMember? = nil
     @Published var selectedCategory: Category? = nil
-//    @Published var familyMembers: [FamilyMember] = [
-//        FamilyMember( id: <#UUID#>, name: "You", avatar: "", colorHex: "Green"),
-//        FamilyMember( id: <#UUID#>, name: "Mother", avatar: "", colorHex: "Red"),
-//        FamilyMember( id: <#UUID#>, name: "Father", avatar: "", colorHex: "Blue")
-//
-//    ]
+    @Published var familyMembers: [FamilyMember] = [
+        FamilyMember( id: UUID(), name: "You", avatar: "👩", colorHex: "Green"),
+        FamilyMember( id: UUID(), name: "Mother", avatar: "👩‍🦰", colorHex: "Red"),
+        FamilyMember( id: UUID(), name: "Father", avatar: "👨", colorHex: "Blue")
+
+    ]
     
     /// Mark: Init
     
@@ -38,7 +38,7 @@ class ExpenseViewModel: ObservableObject{
     }
     ///Mark: Filtering(do it later)
     var filteredExpenses: [Expense] {
-        let calender = Calendar.current
+        _ = Calendar.current
         let now = Date()
         
         switch selectedFilter{

@@ -15,9 +15,13 @@ struct AddExpenseView: View {
     @State private var amount: String = ""
     @State private var selectedCategory: Category = .food
     @State private var selectedDate: Date = Date()
-
+    @State private var selectedMember: FamilyMember?
+    
     var body: some View {
         NavigationView {
+//            .onAppear{
+//                selectedMember = viewModel.familyMembers.first
+//            }
             VStack {
                 formFields
                 
@@ -49,6 +53,18 @@ struct AddExpenseView: View {
             }
             .pickerStyle(MenuPickerStyle())
             
+            
+            Picker("Family Member", selection: $selectedMember){
+                ForEach(viewModel.familyMembers, id: \.self) { member in
+                    HStack {
+                        Text(member.avatar)
+                        Text(member.name)
+                    }
+                    .tag(member as FamilyMember?)
+                }
+            }
+            .pickerStyle(MenuPickerStyle())
+            
             DatePicker("Date", selection: $selectedDate, displayedComponents: .date)
         }
     }
@@ -56,7 +72,21 @@ struct AddExpenseView: View {
     // MARK: - Save Button
     var saveButton: some View {
         Button(action: {
-            print("Save Tapped")
+            guard let selectedMember else {return}
+            
+            let expense = Expense(
+                id: UUID(),
+                title: title,
+                amount: Double(amount) ?? 0,
+                date: selectedDate,
+                category: selectedCategory,
+                member: selectedMember,
+                notes: nil
+            )
+            viewModel.addExpense(expense)
+            dismiss()
+            
+            //print("Save Tapped")
         }) {
             Text("Save Expense")
                 .frame(maxWidth: .infinity)
@@ -70,4 +100,5 @@ struct AddExpenseView: View {
 
 #Preview {
     AddExpenseView()
+        .environmentObject(ExpenseViewModel())
 }
