@@ -88,7 +88,7 @@ struct FamilyMemberExpenseCard: View {
                     .fontWeight(.semibold)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 10)
-                    .background(opacity(0.15))
+                    .background(Color.mint.opacity(0.15))
                     .foregroundColor(Color.mint)
                     .cornerRadius(12)
             }

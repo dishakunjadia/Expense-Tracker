@@ -15,11 +15,9 @@ enum ExpenseFilter : String, CaseIterable{
     case byMember
     case byCategory
     case dateNewest
-    case dateoldest
+    case dateOldest
     case amountHighToLow
     case amountLowToHigh
 }
 
-enum ExpenseSort: CaseIterable, Hashable {
-    
-}
+

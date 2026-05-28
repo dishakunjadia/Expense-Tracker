@@ -35,6 +35,6 @@ class Expense {
         self.date = date
         self.category = category
         self.member = member
-        self.notes
+        self.notes = notes
     }
 }

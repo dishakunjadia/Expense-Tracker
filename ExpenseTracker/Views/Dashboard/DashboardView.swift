@@ -4,92 +4,123 @@
 //
 //  Created by Disha Kunjadia on 5/23/26.
 //
-
 import SwiftUI
 import SwiftData
 
 struct DashboardView: View {
     
-    //@EnvironmentObject var viewModel: ExpenseViewModel
+    // MARK: - SwiftData Queries
+    
     @Query(sort: \Expense.date, order: .reverse)
     private var expenses: [Expense]
     
     @Query
     private var familyMembers: [FamilyMember]
-
-    @State private var showFilterSheet = false
+    
+    // MARK: - States
+    
+    @State private var selectedSort: ExpenseSort = .dateNewest
     @State private var selectedFilter: ExpenseFilter = .all
+    @State private var showFilterSheet = false
+    
+    // MARK: - Body
     
     var body: some View {
-        NavigationView {
+        
+        NavigationStack {
+            
             ScrollView {
-                VStack(spacing: 16) {
+                
+                VStack(spacing: 20) {
                     
                     header
+                    
                     weeklyTotal
+                    
                     addExpenseButton
+                    
                     analyticsButton
+                    
                     recentExpenses
-    
-                    Spacer()
+                    
+                    memberCards
+                    
+                    Spacer(minLength: 30)
                 }
                 .padding()
-                .navigationTitle("Dashboard")
-                .toolbar {
-                    ToolbarItem(placement: .topBarTrailing) {
-                        Button {
-                            showFilterSheet = true
-                        } label: {
-                            Image(systemName: "line.3.horizontal.decrease.circle")
-                        }
+            }
+            .navigationTitle("Dashboard")
+            .toolbar {
+                
+                ToolbarItem(placement: .topBarTrailing) {
+                    
+                    Button {
+                        showFilterSheet = true
+                    } label: {
+                        Image(systemName: "line.3.horizontal.decrease.circle")
                     }
                 }
-                .sheet(isPresented: $showFilterSheet){
-                    FilterSortView()
-                        
-                }
+            }
+            .sheet(isPresented: $showFilterSheet) {
+                
+                FilterSortView()
             }
         }
     }
-    
-    ///#MARK: - Header
+}
+
+// MARK: - Header
+
+extension DashboardView {
     
     var header: some View {
+        
         VStack(alignment: .leading, spacing: 4) {
+            
             Text("Family Expense Tracker")
                 .font(.title2)
-                .bold()
+                .fontWeight(.bold)
             
             Text("Track your spending smartly")
                 .font(.subheadline)
                 .foregroundColor(.secondary)
-                
         }
         .frame(maxWidth: .infinity, alignment: .leading)
     }
-    
-    ///#MARK: - Weekly Total
+}
+
+// MARK: - Weekly Total
+
+extension DashboardView {
     
     var weeklyTotal: some View {
-        VStack(spacing: 6) {
+        
+        VStack(spacing: 8) {
             
             Text("Weekly Total")
                 .font(.subheadline)
                 .foregroundColor(.secondary)
             
-            Text("$\(filteredExpenses.reduce(0) { $0 + $1.amount }, specifier: "%.2f")")
-                .font(.system(size: 34, weight: .bold))
+            Text(
+                "$\(filteredExpenses.reduce(0) { $0 + $1.amount }, specifier: "%.2f")"
+            )
+            .font(.system(size: 34, weight: .bold))
         }
         .frame(maxWidth: .infinity)
         .padding()
         .background(Color(.systemGray6))
-        .cornerRadius(16)
+        .cornerRadius(18)
     }
-    
-    ///#MARK: - Add Expense Button
+}
+
+// MARK: - Buttons
+
+extension DashboardView {
     
     var addExpenseButton: some View {
+        
         NavigationLink(destination: AddExpenseView()) {
+            
             Text("Add Expense")
                 .frame(maxWidth: .infinity)
                 .padding()
@@ -99,107 +130,125 @@ struct DashboardView: View {
         }
     }
     
-    ///#MARK: - Analytics Button
-    
-    var analyticsButton: some View{
-        NavigationLink(destination: AnalyticsView()){
+    var analyticsButton: some View {
+        
+        NavigationLink(destination: AnalyticsView()) {
+            
             Text("View Analytics")
                 .frame(maxWidth: .infinity)
                 .padding()
                 .background(Color.green)
                 .foregroundColor(.white)
                 .cornerRadius(12)
-            
         }
     }
+}
+
+// MARK: - Filtering
+
+extension DashboardView {
     
-    ///#Mark: - Filter Row
-    
-    var filterRow: some View{
-        HStack(spacing:10){
-            ForEach(ExpenseFilter.allCases, id: \.self) { filter in
-                Text(filter.rawValue)
-                    .font(.subheadline)
-                    .padding(.vertical, 6)
-                    .padding(.horizontal, 12)
-                    .background(
-                        selectedFilter == filter
-                        ? Color.cyan
-                        : Color(.systemGray6)
-                    )
-                    .foregroundColor(
-                        selectedFilter == filter
-                        ? Color.mint
-                        : .primary
-                    )
-                    .cornerRadius(10)
-                    .onTapGesture{
-                        selectedFilter = filter
-                    }
-            }
-        }
-    }
-    
-    ///#MARK: - Filtered Expenses
-    var filteredExpenses: [Expense]{
+    var filteredExpenses: [Expense] {
+        
         let calendar = Calendar.current
         let now = Date()
         
         switch selectedFilter {
+            
         case .all:
             return expenses
+            
         case .weekly:
-            return expenses.filter{
+            return expenses.filter {
                 calendar.isDate(
                     $0.date,
                     equalTo: now,
                     toGranularity: .weekOfYear
                 )
             }
+            
         case .monthly:
             return expenses.filter {
                 calendar.isDate(
                     $0.date,
                     equalTo: now,
-                    toGranularity: .month)
+                    toGranularity: .month
+                )
             }
+            
         case .yearly:
             return expenses.filter {
                 calendar.isDate(
                     $0.date,
                     equalTo: now,
-                    toGranularity: .year)
+                    toGranularity: .year
+                )
             }
-        case .byMember:
-            <#code#>
-        case .byCategory:
-            <#code#>
-        case .dateNewest:
-            <#code#>
-        case .dateoldest:
-            <#code#>
-        case .amountHighToLow:
-            <#code#>
-        case .amountLowToHigh:
-            <#code#>
+            
+        default:
+            return expenses
         }
     }
-    
-    ///#MARK: - Recent Expenses
+}
 
+// MARK: - Sorting
+
+extension DashboardView {
+    
+    var sortedExpenses: [Expense] {
+        
+        switch selectedSort {
+            
+        case .dateNewest:
+            return filteredExpenses.sorted {
+                $0.date > $1.date
+            }
+            
+        case .dateOldest:
+            return filteredExpenses.sorted {
+                $0.date < $1.date
+            }
+            
+        case .amountHighToLow:
+            return filteredExpenses.sorted {
+                $0.amount > $1.amount
+            }
+            
+        case .amountLowToHigh:
+            return filteredExpenses.sorted {
+                $0.amount < $1.amount
+            }
+        }
+    }
+}
+
+// MARK: - Recent Expenses
+
+extension DashboardView {
+    
     var recentExpenses: some View {
-        VStack(alignment: .leading, spacing: 10) {
+        
+        VStack(alignment: .leading, spacing: 12) {
             
             Text("Recent Expenses")
                 .font(.headline)
             
-            ForEach(expenses) { expense in
+            if sortedExpenses.isEmpty {
+                
+                Text("No expenses added yet")
+                    .foregroundColor(.secondary)
+                    .padding(.top, 4)
+            }
+            
+            ForEach(sortedExpenses) { expense in
+                
                 HStack {
                     
                     VStack(alignment: .leading, spacing: 4) {
+                        
                         Text(expense.title)
                             .font(.subheadline)
-                            .bold()
+                            .fontWeight(.bold)
                         
                         Text(expense.category.rawValue.capitalized)
                             .font(.caption)
@@ -209,33 +258,72 @@ struct DashboardView: View {
                     Spacer()
                     
                     Text("$\(expense.amount, specifier: "%.2f")")
-                        .bold()
+                        .fontWeight(.bold)
                 }
                 .padding()
                 .background(Color(.systemGray6))
-                .cornerRadius(12)
+                .cornerRadius(14)
             }
         }
     }
-    
-    ///#MARK: - Individual Members
+}
 
+// MARK: - Member Cards
+
+extension DashboardView {
+    
     var memberCards: some View {
+        
         VStack(alignment: .leading, spacing: 16) {
-            Text("Family Members")
-                .font(.headline)
+            
+            HStack {
+                
+                Text("Family Members")
+                    .font(.headline)
+                
+                Spacer()
+                
+                NavigationLink(destination: MemberManagementView()) {
+                    
+                    Image(systemName: "person.badge.plus")
+                        .foregroundColor(.blue)
+                        .font(.title3)
+                }
+            }
+            
+            if familyMembers.isEmpty {
+                
+                Text("No members added yet")
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
+                    .frame(maxWidth: .infinity)
+                    .padding()
+            }
+            
             ForEach(familyMembers) { member in
                 
-                FamilyMemberExpenseCard(member: member, expenses: expenses.filter{
-                    $0.member.id == member.id
-                })
+                FamilyMemberExpenseCard(
+                    member: member,
+                    expenses: expenses.filter {
+                        $0.member.id == member.id
+                    }
+                )
             }
         }
     }
-    
 }
 
+// MARK: - Preview
+
 #Preview {
+    
     DashboardView()
-        
+        .modelContainer(
+            for: [
+                Expense.self,
+                FamilyMember.self
+            ],
+            inMemory: true
+        )
 }
+

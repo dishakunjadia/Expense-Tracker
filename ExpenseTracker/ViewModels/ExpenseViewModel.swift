@@ -15,12 +15,7 @@ class ExpenseViewModel: ObservableObject{
     @Published var selectedFilter: ExpenseFilter = .all
     @Published var selectedMember: FamilyMember? = nil
     @Published var selectedCategory: Category? = nil
-    @Published var familyMembers: [FamilyMember] = [
-        FamilyMember( id: UUID(), name: "You", avatar: "👩", colorHex: "Green"),
-        FamilyMember( id: UUID(), name: "Mother", avatar: "👩‍🦰", colorHex: "Red"),
-        FamilyMember( id: UUID(), name: "Father", avatar: "👨", colorHex: "Blue")
-
-    ]
+    @Published var familyMembers: [FamilyMember] = []
     
     /// Mark: Init
     
@@ -67,28 +62,7 @@ class ExpenseViewModel: ObservableObject{
         }
     }
     
-//    private func loadMockData() {
-//        expenses = [
-//            Expense(
-//                id: UUID(),
-//                title: "Groceries",
-//                amount: 120.5,
-//                date: Date(),
-//                category: .food,
-//                member: FamilyMember(id: UUID(), name: "Maate", avatar: "👩", colorHex: "#FF5733"),
-//                notes: "Weekly Groceries"
-//            ),
-//            
-//            Expense(
-//                            id: UUID(),
-//                            title: "Netflix",
-//                            amount: 15.99,
-//                            date: Date(),
-//                            category: .subscriptions,
-//                            member: FamilyMember(id: UUID(), name: "Dad", avatar: "👨", colorHex: "#33A1FF"),
-//                            notes: nil)
-//        ]
-//    }
+
     func saveExpense(
         title: String,
         amount: Double,

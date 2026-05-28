@@ -9,7 +9,9 @@ import SwiftUI
 
 struct FilterSortView: View {
     @State private var showMemberSheet = false
-    @EnvironmentObject var viewModel: ExpenseViewModel
+    //@EnvironmentObject var viewModel: ExpenseViewModel
+    @State private var selectedFilter: ExpenseFilter = .all
+    @Environment(\.modelContext) private var context
     
     @Environment(\.dismiss) var dismiss
     
@@ -26,7 +28,8 @@ struct FilterSortView: View {
             .navigationTitle("Filter & Sort")
             .sheet(isPresented: $showMemberSheet) {
                 MemberManagementView()
-                    .environmentObject(viewModel)
+                    .modelContext(context)
+                    //.environmentObject(viewModel)
             }
         }
     }
@@ -47,7 +50,7 @@ struct FilterSortView: View {
             return "filemenu.and.selection"
         case .dateNewest:
             return "clock.arrow.circlepath"
-        case .dateoldest:
+        case .dateOldest:
             return "clock"
         case .amountHighToLow:
             return "arrow.down.circle"
@@ -66,11 +69,16 @@ struct FilterSortView: View {
                     Text(filter.rawValue)
                     Spacer()
                     
-                    if viewModel.selectedFilter == filter {
+                    if selectedFilter == filter {
                         Image(systemName: "checkmark.circle.fill")
                             .foregroundColor(.cyan)
                     }
-                    
+                }
+                .padding()
+                .background(Color(.systemGray6))
+                .cornerRadius(12)
+                .onTapGesture{
+                    selectedFilter = filter
                 }
             }
         }

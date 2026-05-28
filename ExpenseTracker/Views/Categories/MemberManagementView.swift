@@ -62,7 +62,8 @@ struct MemberManagementView : View{
                 }
         }
             .navigationTitle("Family Members")
-            .toolbar{
+            .toolbar {
+
                 ToolbarItem(placement: .topBarLeading) {
                     Button {
                         showAddMemberSheet = true
@@ -70,14 +71,23 @@ struct MemberManagementView : View{
                         Image(systemName: "plus")
                     }
                 }
+
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button {
+
+                    } label: {
+                        Image(systemName: "xmark.bin")
+                    }
+                }
             }
             .sheet(isPresented: $showAddMemberSheet) {
                 AddMemberView()
+                    .modelContext(context)
                     
             }
             .sheet(item: $selectedMember){ member in
                 EditMemberView(member: member)
-                    
+                    .modelContext(context)
             }
         }
     }
@@ -85,4 +95,5 @@ struct MemberManagementView : View{
 
 #Preview {
     MemberManagementView()
+        .modelContainer(for: FamilyMember.self, inMemory: true)
 }

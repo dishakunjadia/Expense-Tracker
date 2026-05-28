@@ -18,6 +18,7 @@ struct AddExpenseView: View {
     @State private var selectedCategory: Category = .food
     @State private var selectedDate: Date = Date()
     @State private var selectedMember: FamilyMember?
+    @State private var showMemberError: Bool = false
     
     var body: some View {
         NavigationView {
@@ -48,17 +49,8 @@ struct AddExpenseView: View {
                 .keyboardType(.decimalPad)
                 .textFieldStyle(RoundedBorderTextFieldStyle())
             
-            Picker("Category", selection: $selectedCategory) {
-                ForEach(Category.allCases, id: \.self) { category in
-                    Text(category.rawValue.capitalized)
-                        .tag(category)
-                }
-            }
-            .pickerStyle(MenuPickerStyle())
-            
-            
             Picker("Family Member", selection: $selectedMember){
-                ForEach(familyMembers, id: \.self) { member in
+                ForEach(familyMembers, id:\.self) { member in
                     HStack {
                         Text(member.avatar)
                         Text(member.name)
@@ -68,6 +60,15 @@ struct AddExpenseView: View {
             }
             .pickerStyle(MenuPickerStyle())
             
+            Picker("Category", selection: $selectedCategory) {
+                ForEach(Category.allCases, id: \.self) { category in
+                    Text(category.rawValue.capitalized)
+                        .tag(category)
+                }
+            }
+            .pickerStyle(MenuPickerStyle())
+            
+            
             DatePicker("Date", selection: $selectedDate, displayedComponents: .date)
         }
     }
@@ -75,23 +76,24 @@ struct AddExpenseView: View {
     // MARK: - Save Button
     var saveButton: some View {
         Button(action: {
-            guard let selectedMember else {return}
-            
-            let expense = Expense(
-                id: UUID(),
-                title: title,
-                amount: Double(amount) ?? 0,
-                date: selectedDate,
-                category: selectedCategory,
-                member: selectedMember,
-                notes: nil
-            )
-            do {
-                try context.save()
-            } catch {
-                print(error)
-            }
-            
+                    guard let selectedMember else {
+                        showMemberError = true
+                        return
+                    }
+                    
+                    showMemberError = false
+                    
+                    let expense = Expense(
+                        id: UUID(),
+                        title: title,
+                        amount: Double(amount) ?? 0,
+                        date: selectedDate,
+                        category: selectedCategory,
+                        member: selectedMember,
+                        notes: nil
+                    )
+                    
+                    context.insert(expense)
             dismiss()
             
             //print("Save Tapped")
@@ -108,5 +110,6 @@ struct AddExpenseView: View {
 
 #Preview {
     AddExpenseView()
+        .modelContainer(for: [Expense.self, FamilyMember.self], inMemory: true)
         
 }

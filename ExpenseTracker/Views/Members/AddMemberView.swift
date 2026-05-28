@@ -6,40 +6,37 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct AddMemberView: View {
-    
-    @EnvironmentObject var viewModel: ExpenseViewModel
+
     @Environment(\.dismiss) var dismiss
     @Environment(\.modelContext) private var context
     @State private var name: String = ""
     @State private var avatar: String = ""
     @State private var colorHex: String = "#2196F3"
-    
+
     var body: some View {
-        NavigationView{
+        NavigationView {
             VStack(spacing: 20) {
                 TextField("Member Name", text: $name)
                     .textFieldStyle(.roundedBorder)
-                
+
                 TextField("Avatar Emoji", text: $avatar)
                     .textFieldStyle(.roundedBorder)
-                
+
                 TextField("Color Hex", text: $colorHex)
                     .textFieldStyle(.roundedBorder)
-                
-                Button{
+
+                Button {
                     let member = FamilyMember(
                         id: UUID(),
                         name: name,
                         avatar: avatar,
                         colorHex: colorHex
                     )
-                    
-                    viewModel.saveMember(name: name,
-                                         avatar: avatar,
-                                         colorHex: colorHex,
-                                         context: context)
+                    context.insert(member)
+                    try? context.save()
                     dismiss()
                 } label: {
                     Text("Add Member")
@@ -56,8 +53,6 @@ struct AddMemberView: View {
         }
     }
 }
-
 #Preview {
     AddMemberView()
-        .environmentObject(ExpenseViewModel())
 }

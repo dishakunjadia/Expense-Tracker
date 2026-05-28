@@ -10,12 +10,11 @@ import SwiftData
 
 @main
 struct ExpenseTrackerApp: App {
-    @StateObject private var viewModel = ExpenseViewModel()
+    //@StateObject private var viewModel = ExpenseViewModel()
     
     var body: some Scene {
         WindowGroup {
             DashboardView()
-                .environmentObject(viewModel)
         }
         .modelContainer(for: [
             Expense.self,

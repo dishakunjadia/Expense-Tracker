@@ -6,37 +6,37 @@
 //
 
 import SwiftUI
+import SwiftData
 
-struct EditMemberView: View{
-    @EnvironmentObject var viewModel: ExpenseViewModel
+struct EditMemberView: View {
     @Environment(\.dismiss) var dismiss
-    
+    @Environment(\.modelContext) private var context
+
     let member: FamilyMember
-    
+
     @State private var name: String = ""
     @State private var avatar: String = ""
     @State private var colorHex: String = ""
-    
-    var body : some View {
-        NavigationView{
-            VStack(spacing: 20){
+
+    var body: some View {
+        NavigationView {
+            VStack(spacing: 20) {
                 TextField("Name", text: $name)
                     .textFieldStyle(.roundedBorder)
-                
-                TextField("Avatar", text: $avatar)
+
+                TextField("Avatar Emoji", text: $avatar)
                     .textFieldStyle(.roundedBorder)
-                
+
                 TextField("Color Hex", text: $colorHex)
                     .textFieldStyle(.roundedBorder)
-                
-                Button{
-                    if let index = viewModel.familyMembers.firstIndex(where: {
-                        $0.id == member.id
-                    }) {
-                        viewModel.familyMembers[index].name = name
-                        viewModel.familyMembers[index].avatar = avatar
-                        viewModel.familyMembers[index].colorHex = colorHex
-                    }
+
+                Button {
+                    // ✅ Directly mutate the SwiftData model object
+                    member.name = name
+                    member.avatar = avatar
+                    member.colorHex = colorHex
+
+                    try? context.save()
                     dismiss()
                 } label: {
                     Text("Save Changes")
@@ -50,7 +50,7 @@ struct EditMemberView: View{
             }
             .padding()
             .navigationTitle("Edit Member")
-            .onAppear{
+            .onAppear {
                 name = member.name
                 avatar = member.avatar
                 colorHex = member.colorHex
@@ -60,11 +60,9 @@ struct EditMemberView: View{
 }
 
 #Preview {
-    EditMemberView(
-        member: FamilyMember(
-            id: UUID(),
-            name: "Mother",
-            avatar: "👩",
-            colorHex: "#FF5733"))
-    .environmentObject(ExpenseViewModel())
+    EditMemberView( member: FamilyMember(id: UUID(),
+                                         name:"Mom",
+                                         avatar: "👩",
+                                         colorHex: "#FF5733"))
+        .modelContainer(for: FamilyMember.self, inMemory: true)
 }
