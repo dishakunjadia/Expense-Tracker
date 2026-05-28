@@ -1,6 +1,7 @@
 {
   "images" : [
     {
+      "filename" : "pr_source.png",
       "idiom" : "universal",
       "platform" : "ios",
       "size" : "1024x1024"
